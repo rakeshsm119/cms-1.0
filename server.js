@@ -6,6 +6,7 @@ const cookieParser= require('cookie-parser')
 const assert =require('assert')
 const fileUpload = require('express-fileupload')
 const {StatusCodes} = require('http-status-codes')
+const connectDB = require('./db')
 
 //port
 const PORT =process.env.PORT
@@ -19,7 +20,7 @@ app.use(express.json())
 
 //middlewares
 app.use(cors())
-app.use(cookieParser())
+app.use(cookieParser(process.env.TOKEN_SECRET)) // pass token only for signed cookies
 app.use(fileUpload({
     useTempFiles: true
 }))
@@ -34,6 +35,8 @@ app.use('/api/v1/user', userRoute)
 
 const start = async () => {
     try{
+        await connectDB()
+
         app.listen(PORT, () => {
             console.log(`Server is listening @ http://localhost:${PORT}`)
         })
