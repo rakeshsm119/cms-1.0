@@ -6,7 +6,7 @@ const jwt = require('jsonwebtoken')
 
 const authController = {
     register: async (req, res) => {
-       
+
         try {
             const { name, email, mobile, password } = req.body
 
@@ -35,23 +35,23 @@ const authController = {
             if (!extUser)
                 return res.status(StatusCodes.NOT_FOUND).json({ msg: "User doesn't exists.." })
 
-                // compare password
-                const isMatch =await bcrypt.compare(password, extUser.password)
-                if(!isMatch)
-                return res.status(StatusCodes.NOT_FOUND).json({ msg: "User aren't match."})
+            // compare password
+            const isMatch = await bcrypt.compare(password, extUser.password)
+            if (!isMatch)
+                return res.status(StatusCodes.BAD_REQUEST).json({ msg: "User aren't match." })
 
-                //generater token
-                const accessToken = createAccessToken({ _id: extUser._id})
+            //generater token
+            const accessToken = createAccessToken({ _id: extUser._id })
 
-                //save token in cookies 
-                res.cookie('refreshToken',accessToken,{
-                    httpOnly:true,
-                    signed: true,
-                    path: `/api/v1/auth/refreshToken`,
-                    maxAge: 1 * 24 * 60 * 60 * 1000
-                })
+            //save token in cookies 
+            res.cookie('refreshToken', accessToken, {
+                httpOnly: true,
+                signed: true,
+                path: `/api/v1/auth/refreshToken`,
+                maxAge: 1 * 24 * 60 * 60 * 1000
+            })
 
-            res.json({ msg:"Login Successfully", accessToken })
+            res.json({ msg: "Login Successfully", accessToken })
 
         } catch (err) {
             return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: err.message })
@@ -59,7 +59,7 @@ const authController = {
     },
     logout: async (req, res) => {
         try {
-            res.clearCookie('refreshToken',{path: `/api/v1/auth/refreshToken`})
+            res.clearCookie('refreshToken', { path: `/api/v1/auth/refreshToken` })
 
             res.json({ msg: " logout successfully" })
 
@@ -69,17 +69,17 @@ const authController = {
     },
     refreshToken: async (req, res) => {
         try {
-            const rf= req.signedCookies.refreshToken
-            if(!rf)
-            return res.status(StatusCodes.BAD_REQUEST).json({msg: "Session Expried, Login Again.."})
+            const rf = req.signedCookies.refreshToken
+            if (!rf)
+                return res.status(StatusCodes.BAD_REQUEST).json({ msg: "Session Expried, Login Again.." })
 
             //valid user id or not
-            jwt.verify(rf, process.env.TOKEN_SECRET, (err,user) => {
-                if(err)
-                return res.status(StatusCodes.BAD_REQUEST).json({ msg:"Invalide Access Token.. Login Again.."})
+            jwt.verify(rf, process.env.TOKEN_SECRET, (err, user) => {
+                if (err)
+                    return res.status(StatusCodes.BAD_REQUEST).json({ msg: "Invalid Access Token.. Login Again.." })
 
-            //valid token
-            const accessToken = createAccessToken({ id: user._id})
+                //valid token
+                const accessToken = createAccessToken({ id: user._id })
                 res.json({ accessToken })
             })
 
@@ -91,7 +91,32 @@ const authController = {
     },
     resetPassword: async (req, res) => {
         try {
-            res.json({ msg: "resetPassword " })
+            const id = req.user.id
+            const { oldPassword, newPassword } = req.body
+
+            //read user data
+            const extUser = await User.findById({ _id: id })
+            if (!extUser)
+                return res.status(StatusCodes.NOT_FOUND).json({ msg: "User doesn't exists.." })
+
+            // compare password
+            const isMatch = await bcrypt.compare(oldPassword, extUser.password)
+            if (!isMatch)
+                return res.status(StatusCodes.BAD_REQUEST).json({ msg: "old password aren't match." })
+
+
+
+            // generate newPassword hash
+            const passwordHash = await bcrypt.hash(newPassword, 10)
+
+
+            // update logic
+            const output = await User.findByIdAndUpdate({ _id: id }, { password: passwordHash })
+
+            // //output response
+            
+            res.json({ msg: "user password reset success", output })
+
 
         } catch (err) {
             return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: err.message })
