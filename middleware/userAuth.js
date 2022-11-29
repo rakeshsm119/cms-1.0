@@ -11,8 +11,8 @@ const adminAuth = async(req,res,next) => {
         const extUser = await User.findById({_id:id})
 
         // validate role 
-        if(extUser.role !== "superadmin")
-        return res.status(StatusCodes.BAD_REQUEST).json({ msg: "Access Denied for non-admin users.."})
+        if(extUser.role === "superadmin")
+        return res.status(StatusCodes.BAD_REQUEST).json({ msg: "Update restricted for Admin.."})
 
         next()
 
