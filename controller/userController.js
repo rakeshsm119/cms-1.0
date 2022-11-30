@@ -32,7 +32,7 @@ const userController ={
             await User.findByIdAndUpdate({_id:req.user.id}, {name,mobile,image})
 
 
-            res.status(StatusCodes.OK).json({ msg: "USer data updated successfully."})
+            res.status(StatusCodes.OK).json({ msg: "User data updated successfully."})
 
         }catch(err){
             return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({msg: err.message})
@@ -44,7 +44,7 @@ const userController ={
 
             await User.findByIdAndDelete({_id: id})
 
-            res.json({ msg: " User dat deleted successfully "})
+            res.json({ msg: " User data deleted successfully "})
 
         }catch(err){
             return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({msg: err.message})

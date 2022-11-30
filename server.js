@@ -29,11 +29,13 @@ app.use(fileUpload({
 const authRoute = require('./route/authRoute')
 const userRoute = require('./route/userRoute')
 const imageRoute= require('./route/imageRoute')
+const mailRoute= require('./route/mailRoute')
 
 //primary route
 app.use('/api/v1/auth', authRoute)
 app.use('/api/v1/user', userRoute)
 app.use('/api/v1/image',imageRoute)
+app.use('/api/v1/mail',mailRoute)
 
 //default route
 app.all('*', (req,res) => {
