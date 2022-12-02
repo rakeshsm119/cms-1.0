@@ -1,6 +1,6 @@
 const nodeMailer = require('nodemailer')
 
-const sendMail = async (to,cc,bcc, subject, content) => {
+const sendMail = async (to,subject, content) => {
     try{
         const transporter = await nodeMailer.createTransport({
             service: process.env.MAIL_SERVICE,
@@ -15,8 +15,6 @@ const sendMail = async (to,cc,bcc, subject, content) => {
         let info = await transporter.sendMail({
             from: process.env.MAIL_ID,
             to,
-            cc,
-            bcc,
             subject,
             html: `<div> ${content} </div>`
         })
