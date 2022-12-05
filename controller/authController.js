@@ -47,7 +47,7 @@ const authController = {
             // compare password
             const isMatch = await bcrypt.compare(password, extUser.password)
             if (!isMatch)
-                return res.status(StatusCodes.BAD_REQUEST).json({ msg: "User aren't match." })
+                return res.status(StatusCodes.BAD_REQUEST).json({ msg: "Password aren't match." })
 
             //generater token
             const accessToken = createAccessToken({ _id: extUser._id })
