@@ -8,7 +8,7 @@ export const DataContext = createContext();
 
 // context provider
 function DataProvider(props) {
-    const [token,setToken] = useState('')
+    const [token,setToken] = useState(false)
 
     const getToken = async () => {
       await axios.get(`/api/v1/auth/refreshToken`)
@@ -36,7 +36,7 @@ function DataProvider(props) {
     const memoValue = useMemo(() => ({
         token,
         data
-    }),[token])
+    }),[token,data])
   return (
     <DataContext.Provider value={memoValue}>
         {props.children}

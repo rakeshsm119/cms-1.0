@@ -40,9 +40,9 @@ app.use('/api/v1/image',imageRoute)
 app.use('/api/v1/mail',mailRoute)
 
 //default route
-app.all('*', (req,res) => {
-    res.status(StatusCodes.NOT_FOUND).json({ msg: "The Requested route path Not found"})
-})
+// app.all('*', (req,res) => {
+//     res.status(StatusCodes.NOT_FOUND).json({ msg: "The Requested route path Not found"})
+// })
 
 if(process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'staging'){
     app.use(express.static(`client/build`))
@@ -52,14 +52,14 @@ if(process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'staging'){
 }
 
 const start = async () => {
-    try{
+    try {
         await connectDB()
-
         app.listen(PORT, () => {
-            console.log(`Server is listening @ http://localhost:${PORT}`)
+            console.log(`server is listening @ http://localhost:${PORT}`);
         })
-    }catch(err){
+    } catch (err) {
         return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: err.message })
     }
 }
+
 start()

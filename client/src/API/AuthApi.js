@@ -24,7 +24,7 @@ function AuthApi(token) {
                         Authorization: token  }
                 })
                 // console.log('Current user info =', out)
-                setCurrentUser(out.data.user)
+                setCurrentUser(out.data.users)
                 setIsLogged(true)
                 if(out.data.users.role === 'superadmin'){
                     setIsAdmin(true)
