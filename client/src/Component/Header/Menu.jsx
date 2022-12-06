@@ -63,6 +63,12 @@ function Menu() {
                                 isTrainer ? <NavLink to={`/trainer/profile`} className="dropdown-item">Profile</NavLink> : null
                             }
                         </li>
+                        <li>
+                            {
+                                isAdmin ? <NavLink to={`/admin/users`} className="dropdown-item">Users</NavLink> : null
+                                
+                            }
+                        </li>
                         <li className="dropdown-divider"></li>
                         <li>
                             <NavLink to={'/'} onClick={logoutUser} className="dropdown-item btn btn-danger">Logout</NavLink>

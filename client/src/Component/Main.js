@@ -19,6 +19,7 @@ import StudentProfile from './Student/StudentProfile'
 import StudentDashboard from './Student/StudentDashboard'
 import TrainerProfile from './Trainer/TrainerProfile'
 import TrainerDashboard from './Trainer/TrainerDashboard'
+import AllUser from './Admin/AllUser'
 
 
 function Main() {
@@ -49,6 +50,7 @@ function Main() {
              isLogged && isAdmin ? (
                 <Route element={<ProtectedRoute />}>
                     <Route path='/admin/profile' element={<AdminProfile />} />
+                    <Route path='/admin/users' element={<AllUser />} />
                     <Route path='/admin/dashboard' element={<AdminDashboard />} />
                 </Route>
               ) : null

@@ -27,9 +27,9 @@ const userController ={
     },
     updateUser: async (req,res) => {
         try{
-            const  { name,mobile,image} = req.body 
+            const  { name,email,mobile,image} = req.body 
 
-            await User.findByIdAndUpdate({_id:req.user.id}, {name,mobile,image})
+            await User.findByIdAndUpdate({_id:req.user.id}, {name,email,mobile,image})
 
 
             res.status(StatusCodes.OK).json({ msg: "User data updated successfully."})

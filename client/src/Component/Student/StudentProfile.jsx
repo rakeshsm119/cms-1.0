@@ -19,6 +19,7 @@ function StudentProfile() {
 
   const [user,setUser] = useState({
     name: "",
+    email:"",
     mobile: ""
   })
   const [isEdit,setIsEdit] = useState(false)
@@ -28,15 +29,41 @@ function StudentProfile() {
     setUser({ ...user, [name]: value })
   }
 
+  const toggleEdit = () => {
+    setIsEdit((prevState) => !prevState)
+  }
+
   useEffect(() => {
     setImg(currentUser.image)
+    setUser(currentUser)
   }, [img, currentUser])
 
+  const updateHandler = async (e) => {
+    e.preventDefault()
+    try{
+      const updateUser = {
+        name: user.name,
+        email: user.email,
+        mobile: user.mobile
+      }
+      console.log('update data =',updateUser)
+      await axios.patch(`/api/v1/user/update`, updateUser, {
+        headers: { Authorization: token }
+      })
+      toast.success("Profile image Updated successfully")
+      window.location.href = "/student/profile"
+
+    }catch(err){
+      toast.error(err.response.data.msg)
+    }
+  }
+
+  //handler upload
   const handleUpload = async (e) => {
     e.preventDefault();
     try {
       const file = e.target.files[0];
-      console.log('image data =', file)
+      // console.log('image data =', file)
       //file validation
       if (!file)
         return toast.error('file not exists.. Choose image to upload..')
@@ -59,7 +86,7 @@ function StudentProfile() {
       })
 
       //update db file
-      await axios.patch(`/api/v1/user/update`, { image: res.date }, {
+      await axios.patch(`/api/v1/user/update`, { image: res.data }, {
         headers: { Authorization: token }
       })
       toast.success("Profile image Updated successfully")
@@ -74,6 +101,7 @@ function StudentProfile() {
     }
   }
 
+  //handler  delete
   const handleDestroy = async (e) => {
     try {
       if (window.confirm('Are you sure to delete profile image ? ')) {
@@ -136,10 +164,42 @@ function StudentProfile() {
                 </div>
               </div>
               <div className="col-md-8">
-                <div className="card-body">
+               {
+                isEdit ? (
+                  <div className="cart-body">
+                    <div className="d-flex justify-content-between">
+                  <h4 className="card-title text-center text-uppercase text-success">
+                    Update User
+                    </h4>
+                    <button onClick={toggleEdit} className="btn btn-danger"> <i className="bi bi-x-circle"></i> </button>
+                  </div>
+                  <hr />
+                  <form action="off" onSubmit={updateHandler}>
+                    <div className="form-group mt-2">
+                      <label htmlFor="name">Name</label>
+                      <input type="text" name='name' id='name' value={user.name} onChange={readValue} className="form-control" required />
+                    </div>
+                    <div className="form-group mt-2">
+                      <label htmlFor="email">Email</label>
+                      <input type="email" name='email' id='email' value={user.email} onChange={readValue} className="form-control" required />
+                    </div>
+                    <div className="form-group mt-2">
+                      <label htmlFor="mobile">Mobile</label>
+                      <input type="number" name='mobile' id='mobile' value={user.mobile} onChange={readValue} className="form-control" required />
+                    </div>
+                    <div className="form-group mt-2">
+                      <input type="submit" value="Update" className='btn btn-warning'  />
+                    </div>
+                  </form>
+                  </div>
+                ) : (
+                  <div className="card-body">
+                  <div className="d-flex justify-content-between">
                   <h4 className="card-title text-center text-uppercase text-success">
                     {currentUser.name}
-                  </h4>
+                    </h4>
+                    <button onClick={toggleEdit} className="btn btn-info"> <i className="bi bi-pen"></i> </button>
+                  </div>
                   <hr />
                   <p className="card-text">
                     <strong>Email</strong>
@@ -157,6 +217,8 @@ function StudentProfile() {
                   </p>
                   <hr />
                 </div>
+                )
+               }
               </div>
             </div>
           </div>

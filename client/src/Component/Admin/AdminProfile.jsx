@@ -28,7 +28,7 @@ function AdminProfile() {
 
       //size validation
       if(file.size > 3 * 1024 * 1024)
-      return toast.warning("File size must be below 1mb..")
+      return toast.warning("File size must be below 3Mb..")
 
       //append in form constructor
       let formData = new FormData()
@@ -43,7 +43,7 @@ function AdminProfile() {
         }
       })
       //update db file
-      await axios.patch(`/api/v1/user/update`, { image: res.date}, {
+      await axios.patch(`/api/v1/user/update`, { image: res.data}, {
         headers: {Authorization: token}
       })
       toast.success("profile image Updated successfully")
@@ -80,7 +80,6 @@ function AdminProfile() {
       toast.error(err.response.data.msg)
     }
   }
-  const submitHandler = async (e) => { }
 
 
   return (
