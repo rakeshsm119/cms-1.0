@@ -1,5 +1,5 @@
-import React,{ useEffect,useState,useContext} from 'react'
-import {DataContext, DateContext} from '../../GlobalContext'
+import React, { useEffect, useState, useContext } from 'react'
+import { DataContext, DateContext } from '../../GlobalContext'
 import { toast } from 'react-toastify'
 import axios from 'axios'
 
@@ -7,98 +7,128 @@ import axios from 'axios'
 function AllUser() {
     const context = useContext(DataContext)
     const token = context.token
-    const [users,setUsers] = useState([])
+    const [users, setUsers] = useState([])
+    const [role, setRole] = useState(" ")
+    const [userId, setUserId] = useState("")
+
 
     const readUsers = async () => {
         const res = await axios.get('/api/v1/user/allUser', {
             headers: { Authorization: token }
         })
-        console.log('all users =',res.data)
+        // console.log('all users =',res.data)
         setUsers(res.data.users)
     }
 
     useEffect(() => {
         readUsers()
-    },[])
+    }, [])
 
     const handleUpdate = (id) => {
-        console.log('id =',id)
+        // console.log('id =',id)
+        const exUser = users.find((user) => user._id === id)
+        // console.log('existuser = ',exUser)
+        setRole(exUser.role)
+        setUserId(exUser._id)
+
     }
-  return (
-    <div className="container">
-        <div className="row">
-            <div className="col-md-12 text-center">
-                <h3 className="display-3 text-success">All Users</h3>
+
+    const submitHandler = async (e) => {
+        e.preventDefault();
+        //update db file
+        await axios.patch(`/api/v1/user/changeRole/${userId}`, { role: role }, {
+            headers: { Authorization: token }
+        });
+        toast.success("User Role updated successfully")
+        window.location.href = "/admin/users"
+    }
+
+    const deleteHandler = async (id) => {
+        if (window.confirm('Are you sure to delete the user ?')) {
+          const res =  await axios.delete(`/api/v1/user/delete/${id}`, {
+                headers: { Authorization: token }
+            })
+            toast.success(res.data.msg)
+            window.location.href = "/admin/users"
+        } else {
+            return;
+        }
+    }
+    return (
+        <div className="container">
+            <div className="row">
+                <div className="col-md-12 text-center">
+                    <h3 className="display-3 text-success">All Users</h3>
+                </div>
             </div>
-        </div>
-        <div className="row">
-            <div className="col-md-12 table-responsive">
-                <table className="table table-bordered table-striped">
-                    <thead>
-                        <tr className='text-center'>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Mobile</th>
-                            <th>Role</th>
-                            <th>Image</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {
-                            users.map((item,index) => {
-                                return (
-                                    <tr key={index}>
-                                        <td>{item.name }</td>
-                                        <td>{item.email }</td>
-                                        <td>{item.mobile }</td>
-                                        <td>{item.role }</td>
-                                        <td>
-                                            <img src={item.image.url} alt="no Image Found" className="img-fluid" width={100} height={100}/>
-                                        </td>
-                                        <td>
-                                            <div className="btn-group">
-                                                <button onClick={() => handleUpdate(item._id)} data-bs-toggle="modal" data-bs-target="#updateRole" className="btn btn-info"><i className="bi bi-pen"></i></button>
-                                                <button className="btn btn-danger"><i className="bi bi-trash"></i></button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                )
-                            })
-                        }
-                    </tbody>
-                </table>
+            <div className="row">
+                <div className="col-md-12 table-responsive">
+                    <table className="table table-bordered table-striped">
+                        <thead>
+                            <tr className='text-center'>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Mobile</th>
+                                <th>Role</th>
+                                <th>Image</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {
+                                users.map((item, index) => {
+                                    return (
+                                        <tr key={index}>
+                                            <td>{item.name}</td>
+                                            <td>{item.email}</td>
+                                            <td>{item.mobile}</td>
+                                            <td>{item.role}</td>
+                                            <td>
+                                                <img src={item.image.url} alt="no Image Found" className="img-fluid" width={100} height={100} />
+                                            </td>
+                                            <td>
+                                                <div className="btn-group">
+                                                    <button onClick={() => handleUpdate(item._id)} data-bs-toggle="modal" data-bs-target="#updateRole" className="btn btn-info"><i className="bi bi-pen"></i></button>
+                                                    <button onClick={() => deleteHandler(item._id)} className="btn btn-danger"><i className="bi bi-trash"></i></button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    )
+                                })
+                            }
+                        </tbody>
+                    </table>
+                </div>
             </div>
-        </div>
-        {/*add modal */}
-        {/*end of modal */}
-        <div className="modal fade" id='updateRole' tabIndex={"-1"}>
-            <div className="modal-dialog">
-                <div className="modal-content">
-                    <div className="modal-header">
-                        <h3 className="modal-title fs-5" id="updateRoleLabel">Update Role</h3>
-                        <button type='button' data-bs-dismiss="modal" className="btn-close"></button>
+            {/*add modal */}
+            {/*end of modal */}
+            <div className="modal fade" id='updateRole' tabIndex={"-1"}>
+                <div className="modal-dialog">
+                    <div className="modal-content">
+                        <div className="modal-header">
+                            <h3 className="modal-title fs-5" id="updateRoleLabel">Update Role</h3>
+                            <button type='button' data-bs-dismiss="modal" className="btn-close"></button>
+                        </div>
+                        <div className="modal-body">
+                            <form autoComplete="off" onSubmit={submitHandler}>
+                                <div className="form-group mt-2">
+                                    <label htmlFor="role">Choose Role</label>
+                                    <select name="role" id="role" value={role} onChange={(e) => setRole(e.target.value)} className="form-select">
+                                        <option value="student">Student</option>
+                                        <option value="trainer">Trainer</option>
+                                    </select>
+                                </div>
+                                <div className="form-group mt-2">
+                                    <input type="submit" value="Update" className="btn btn-warning" />
+                                </div>
+                            </form>
+                        </div>
+                        <div className="modal-footer"></div>
                     </div>
-                    <div className="modal-body">
-                        <form autoComplete="off">
-                            <div className="form-group mt-2">
-                                <label htmlFor="role">Choose Role</label>
-                                <select name="role" id="role" className="form-select">
-                                    <option value="student">Student</option>
-                                    <option value="trainer">Trainer</option>
-                                </select>
-                            </div>
-                            <div className="form-group mt-2">
-                                <input type="submit" value="Update" className="btn btn-warning" />
-                            </div>
-                        </form>
-                    </div>
-                    <div className="modal-footer"></div>
                 </div>
             </div>
         </div>
-    </div>
-  )
+    )
 }
 
 export default AllUser

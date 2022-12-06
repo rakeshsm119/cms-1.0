@@ -46,7 +46,7 @@ function TrainerProfile() {
         email: user.email,
         mobile: user.mobile
       }
-      console.log('update data =',updateUser)
+      // console.log('update data =',updateUser)
       await axios.patch(`/api/v1/user/update`, updateUser, {
         headers: { Authorization: token }
       })
