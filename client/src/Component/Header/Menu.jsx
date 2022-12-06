@@ -15,6 +15,7 @@ function Menu() {
 
 
     const navigete = useNavigate()
+    
     const logoutUser = async () => {
         if(window.confirm(`Are you sure to logout`)) {
             const res = await axios.get(`/api/v1/auth/logout`);

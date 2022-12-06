@@ -4,6 +4,6 @@ const auth = require('../middleware/auth')
 
 
 route.post('/profileImage/upload',auth, imageController.uploadProfileImage )
-route.post('/profileImage/delete/:id',auth, imageController.deleteProfileImage)
+route.post('/profileImage/delete',auth, imageController.deleteProfileImage)
 
 module.exports = route

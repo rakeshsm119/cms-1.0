@@ -53,7 +53,7 @@ const imageController = {
         try{
             const {public_id} = req.body
             if(!public_id)
-            return res.status(StatusCodes.NOT_FOUND).json({ msg: "No publice id found"})
+            return res.status(StatusCodes.NOT_FOUND).json({ msg: "No public id found"})
 
             await cloudinary.v2.uploader.destroy(public_id, (err,result) => {
                 if(err)
